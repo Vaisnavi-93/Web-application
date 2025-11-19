@@ -1,0 +1,8 @@
+import mongoose from 'mongoose';
+const NoteSchema = new mongoose.Schema({
+  userId:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
+  title:String,
+  body:String,
+  createdAt:{type:Date,default:Date.now}
+});
+export default mongoose.models.Note || mongoose.model('Note', NoteSchema);
