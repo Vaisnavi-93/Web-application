@@ -1,7 +1,6 @@
-import connectDB from "../../../lib/mongodb";
+import connectDB from "../../../lib/mongoose";
 import User from "../../../models/User";
-import { hashPassword } from "../../../lib/hashPassword";
-import { signToken } from "../../../lib/jwt";
+import { hashPassword, signToken } from "../../../utils/auth";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
