@@ -1,42 +1,35 @@
-import connectDB from "@/lib/mongodb";
-import User from "@/models/User";
-import { hashPassword } from "@/lib/hashPassword";
-import { signToken } from "@/lib/jwt";
+import connectDB from "../../../lib/mongodb";
+import User from "../../../models/User";
+import { hashPassword } from "../../../lib/hashPassword";
+import { signToken } from "../../../lib/jwt";
 
 export default async function handler(req, res) {
-  // Allow only POST
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  // Connect to DB
   await connectDB();
 
   try {
     const { name, email, password } = req.body;
 
-    // Validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Missing fields" });
     }
 
-    // Check existing user
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(400).json({ message: "User exists" });
     }
 
-    // Hash password
     const hashed = await hashPassword(password);
 
-    // Create new user
     const user = await User.create({
       name,
       email,
       password: hashed,
     });
 
-    // Generate token
     const token = signToken({ id: user._id });
 
     return res.status(201).json({
@@ -49,7 +42,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("Register Error:", error);
+    console.log("Register Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 }
